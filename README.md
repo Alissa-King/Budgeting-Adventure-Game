@@ -33,8 +33,4 @@ We welcome contributions from the community! If you'd like to help improve the g
 
 This project is licensed under the MIT License.
 
-## Acknowledgments
-
-* [List any resources, libraries, or individuals you'd like to acknowledge]
-
 **Let's embark on this budgeting adventure together!**
