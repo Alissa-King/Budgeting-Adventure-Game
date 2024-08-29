@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Budgeting Adventure</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f0f0f0; 
+            color: #333; 
+        }
+
+        #game-container {
+            width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff; 
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+        }
+
+        h1 {
+            text-align: center;
+            color:   
+ #2196F3; 
+        }
+
+        #scenario {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        #choices {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        #choices button {
+            background-color: #4CAF50; 
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size:   
+ 1em;
+        }
+
+        #choices button:hover {
+            background-color: #3e8e41; 
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-style: italic;
+            color: #777;
+        }
+
+        #financial-health {
+            font-weight: bold;
+        }
+
+        #next-button {
+            background-color: #2196F3; 
+            color: white;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        #next-button:hover {
+            background-color: #0b7dda; 
+        }
+
+        #next-button:disabled {
+            background-color: #ccc; 
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>The Budgeting Adventure</h1>
+        <p id="scenario"></p> 
+        <div id="choices"></div> 
+        <p id="feedback"></p> 
+
+        <h2>Financial Health: <span id="financial-health">100</span></h2> 
+
+        <button id="next-button" disabled>Next</button>
+    </div>
+
+    <script>
+        // Game data (scenarios, choices, feedback)
+        const gameData = {
+            currentStage: 0,
+            financialHealth: 100, 
+            stages: [
+                {
+                    scenario: "You're a college student with a part-time job. You need to decide how to allocate your limited income.",
+                    choices: [
+                        { 
+                            text: "Spend most of your income on social activities and eating out.", 
+                            consequence: -50,
+                            feedback: "Your financial health takes a hit! It's important to prioritize essential expenses in college. Consider cutting back on non-essential spending and creating a budget."
+                        },
+                        { 
+                            text: "Create a budget and stick to it, prioritizing essential expenses.", 
+                            consequence: +100,
+                            feedback: "Great choice! Budgeting is key to financial success. Your financial health improves significantly. Keep tracking your expenses and making informed decisions."
+                        },
+                        { 
+                            text: "Find a way to earn extra income through a side hustle or freelance work.", 
+                            consequence: +75,
+                            feedback: "Smart move! Increasing your income can help you achieve your financial goals faster. Your financial health improves. Explore different opportunities and find something that fits your skills and interests."
+                        },
+                        {
+                            text: "Apply for scholarships or grants to help cover tuition and other expenses.",
+                            consequence: +50,
+                            feedback: "Good thinking! Scholarships and grants can provide valuable financial assistance. Research available opportunities and submit strong applications."
+                        }
+                    ]
+                },
+                {
+                    scenario: "You've graduated and landed your first full-time job. How will you manage your newfound income?",
+                    choices: [
+                        {
+                            text: "Splurge on a new car and expensive gadgets.",
+                            consequence: -100,
+                            feedback: "While it's tempting to indulge, overspending can quickly derail your financial progress. Consider saving for the future and making more mindful purchases."
+                        },
+                        {
+                            text: "Start saving for a down payment on a house or an emergency fund.",
+                            consequence: +150,
+                            feedback: "Excellent choice! Saving for the future is crucial. Building an emergency fund and saving for a down payment are wise financial goals."
+                        },
+                        {
+                            text: "Invest a portion of your income in stocks or mutual funds.",
+                            consequence: +75,
+                            feedback: "Investing can be a great way to grow your wealth over time. However, it's important to understand the risks involved and choose investments that align with your financial goals."
+                        },
+                        {
+                            text: "Pay off any outstanding student loans or other debts.",
+                            consequence: +100,
+                            feedback: "Prioritizing debt repayment is a smart move. Reducing your debt burden will free up more income for saving and investing in the future."
+                        }
+                    ]
+                },
+                {
+                    scenario: "You're considering buying a house. What factors will you consider in your decision?",
+                    choices: [
+                        {
+                            text: "Focus solely on the purchase price and ignore other costs like property taxes and maintenance.",
+                            consequence: -75,
+                            feedback: "It's important to consider all the costs associated with homeownership, not just the purchase price. Property taxes, insurance, and maintenance can significantly impact your budget."
+                        },
+                        {
+                            text: "Get pre-approved for a mortgage and carefully evaluate your budget to determine how much you can afford.",
+                            consequence: +125,
+                            feedback: "Great decision! Getting pre-approved and understanding your budget are crucial steps in the home buying process. This will help you avoid overextending yourself financially."
+                        },
+                        {
+                            text: "Hire a real estate agent to help you navigate the market and find the right property.",
+                            consequence: +50,
+                            feedback: "Working with a real estate agent can be beneficial, especially for first-time homebuyers. They can provide valuable expertise and guidance throughout the process."
+                        },
+                        {
+                            text: "Consider the location, neighborhood, and potential resale value of the property.",
+                            consequence: +75,
+                            feedback: "Thinking long-term is wise. Location and resale value are important factors to consider when buying a house. A good location can enhance your quality of life and potentially increase the property's value over time."
+                        }
+                    ]
+                }
+                // Add more stages here as needed
+            ]
+        };
+
+        // Function to display the current scenario and choices
+        function displayScenario() {
+            const currentStageData = gameData.stages[gameData.currentStage];
+            document.getElementById("scenario").textContent = currentStageData.scenario;
+
+            const choicesContainer = document.getElementById("choices");
+            choicesContainer.innerHTML = ""; 
+
+            currentStageData.choices.forEach(choice => {
+                const button = document.createElement("button");
+                button.textContent = choice.text;
+                button.addEventListener("click", () => handleChoice(choice));
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        // Function to handle player choices
+        function handleChoice(choice) {
+            gameData.financialHealth += choice.consequence;
+
+            // Provide feedback to the player
+            document.getElementById("feedback").textContent = choice.feedback;
+
+            // Enable the "Next" button
+            document.getElementById("next-button").disabled = false;
+
+            // Update the financial health display
+            updateFinancialHealthDisplay();
+        }
+
+        // Function to move to the next stage
+        function nextStage() {
+            gameData.currentStage++;
+            if (gameData.currentStage < gameData.stages.length) {
+                displayScenario();
+                document.getElementById("next-button").disabled = true;
+                document.getElementById("feedback").textContent = ""; 
+            } else {
+                // Game over or end scenario
+                alert("Congratulations! You've completed The Budgeting Adventure. Your final financial health is: " + gameData.financialHealth);
+            }
+        }
+
+        // Function to update the financial health display
+        function updateFinancialHealthDisplay() {
+            document.getElementById("financial-health").textContent = gameData.financialHealth;
+        }
+
+        // Event listener for the "Next" button
+        document.getElementById("next-button").addEventListener("click", nextStage);
+
+        // Start the game by displaying the first scenario
+        displayScenario();
+    </script>
+</body>
+</html>
